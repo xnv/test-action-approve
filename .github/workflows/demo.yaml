@@ -12,9 +12,14 @@ jobs:
       - name: Setup Node
         uses: actions/setup-node@395ad3262231945c25e8478fd5baf05154b1d79f # v6.1.0
         with:
-          node-version: 24.0
+          node-version: 22.0
       - name: Check ver
-        run: echo "NPM ver. $(npm -v)"
+        run: |
+          LAST_INVALID_VER="11.10.1"
+          if [ $(npm -v) = $(printf "$LAST_INVALID_VER\n$(npm -v)" | sort -V | head -n1) ]; then
+            echo "Error: Found npm@$(npm -v), which isn't support min-release-age"
+            exit 1
+          fi
       - name: List files in the repository
         run: |
           ls ${{ github.workspace }}
